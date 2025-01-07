@@ -5,4 +5,7 @@ RTSP custom player.
 4. Stream Camera require:- Camera ip address, user name, password.
    This is an example project that includes images.
 
-![Example Image](Screenshots/data_entry.jpg,Screenshots/main_page.jpg,Screenshots/password.jpg,Screenshots/playing.jpg)
+![Example Image](Screenshots/data_entry.jpg)
+![Example Image](Screenshots/main_page.jpg)
+![Example Image](Screenshots/password.jpg)
+![Example Image](Screenshots/playing.jpg)
