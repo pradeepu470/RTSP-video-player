@@ -21,16 +21,16 @@ import java.util.ArrayList;
 public class FBoxCCTVPlay extends Thread {
     private final String TAG = "FBoxCCTVPlay";
     private int height;
-    private boolean mStopRead = false;
+    public boolean mStopRead = false;
     private MediaCodec mediaCodec;
     private String mimeType;
     private Surface surface;
     private int width;
-    private ArrayList<DecoderData> mAccessUnits = new ArrayList<>();
-    private ArrayList<Integer> mAvailableDecoderInputBuffer = new ArrayList<>();
+    public ArrayList<DecoderData> mAccessUnits = new ArrayList<>();
+    public ArrayList<Integer> mAvailableDecoderInputBuffer = new ArrayList<>();
     private int captureRate = 1;
 
-    private Handler mHandler = null;
+    public Handler mHandler = null;
     private void createHandler() {
         mHandler = new Handler() {
             public void handleMessage(Message msg) {
@@ -73,9 +73,7 @@ public class FBoxCCTVPlay extends Thread {
 
 
     public void putData(final byte[] data,int size){
-        if(data == null) {
-            Log.e(TAG, "pradeep: " + data);
-        } else {
+        if(data != null) {
             DecoderData frame = new DecoderData(data);
             mAccessUnits.add(frame);
         }
@@ -92,26 +90,30 @@ public class FBoxCCTVPlay extends Thread {
     }
 
 
-    private void inputBufferProcess(Message msg) {
+    public void inputBufferProcess(Message msg) {
         int index = msg.arg1;
         MediaCodec mediaCodec2 = (MediaCodec) msg.obj;
         if (!this.mAccessUnits.isEmpty()) {
             try {
-                ByteBuffer byteBuffer = mediaCodec2.getInputBuffer(index);
-                if (byteBuffer != null) {
-                    byteBuffer.clear();
-                }
-                if ((this.mAccessUnits.size() > 0)) {
-                    DecoderData frame = this.mAccessUnits.get(0);
-                    if (frame != null) {
-                        byte[] playData = frame.getData();
-                        byteBuffer.put(playData, 0, playData.length);
-                        mediaCodec2.queueInputBuffer(index, 0, playData.length, 0, 0);
-                        this.mAccessUnits.remove(0);
-                        this.mAvailableDecoderInputBuffer.remove(0);
+                if(mediaCodec2 != null) {
+                    ByteBuffer byteBuffer = mediaCodec2.getInputBuffer(index);
+                    if (byteBuffer != null) {
+                        byteBuffer.clear();
                     }
-                } else {
-                    Log.v("ThreadForCCTVRecord", "no buffer available...");
+                    if ((!this.mAccessUnits.isEmpty())) {
+                        DecoderData frame = this.mAccessUnits.get(0);
+                        if (frame != null) {
+                            byte[] playData = frame.getData();
+                            byteBuffer.put(playData, 0, playData.length);
+                            mediaCodec2.queueInputBuffer(index, 0, playData.length, 0, 0);
+                            this.mAccessUnits.remove(0);
+                            if (mAvailableDecoderInputBuffer.size() > 0) {
+                                this.mAvailableDecoderInputBuffer.remove(0);
+                            }
+                        }
+                    } else {
+                        Log.v("ThreadForCCTVRecord", "no buffer available...");
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -128,7 +130,8 @@ public class FBoxCCTVPlay extends Thread {
             timeOut.what = message.kWhatInputBufferAvailable.ordinal();
             timeOut.arg1 = index;
             timeOut.obj = mediaCodec2;
-            if (this.mHandler.sendMessageDelayed(timeOut, 2000)) {
+            if (this.mHandler != null && this.mHandler.sendMessageDelayed(timeOut, 2000)) {
+
             }
         }
     }
@@ -154,7 +157,7 @@ public class FBoxCCTVPlay extends Thread {
                 timeOut.what = message.kWhatInputBufferAvailable.ordinal();
                 timeOut.arg1 = index;
                 timeOut.obj = mediaCodec;
-                if (mHandler.sendMessageDelayed(timeOut, 50)) {
+                if (mHandler != null && mHandler.sendMessageDelayed(timeOut, 50)) {
                     return;
                 }
                 return;
@@ -249,20 +252,23 @@ public class FBoxCCTVPlay extends Thread {
     }
 
     public void stopPlayer() {
-        Log.d("VideoDecodeThread", "VideoDecodeThread stopped");
         this.mStopRead = true;
         try {
-            this.mHandler.removeMessages(message.kWhatInputBufferAvailable.ordinal());
-            this.mHandler.removeMessages(message.kWhatOutputBufferAvailable.ordinal());
+            if(this.mHandler != null) {
+                this.mHandler.removeMessages(message.kWhatInputBufferAvailable.ordinal());
+                this.mHandler.removeMessages(message.kWhatOutputBufferAvailable.ordinal());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         this.mAvailableDecoderInputBuffer.clear();
         this.mAccessUnits.clear();
-        this.mediaCodec.stop();
-        this.mediaCodec.release();
-        Log.d("VideoDecodeThread", "VideoDecodeThread stopped");
-        this.mediaCodec = null;
+        if(this.mediaCodec != null) {
+            this.mediaCodec.stop();
+            this.mediaCodec.release();
+            Log.d("VideoDecodeThread", "VideoDecodeThread stopped");
+            this.mediaCodec = null;
+        }
         this.mHandler = null;
     }
 

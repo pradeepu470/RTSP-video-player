@@ -40,6 +40,12 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    testImplementation libs.mockito.core
 
-    implementation 'androidx.media3:media3-exoplayer:1.5.1'
+    // AndroidX Test Core (optional for more advanced Android testing)
+    testImplementation libs.androidx.core
+
+    implementation libs.androidx.media3.exoplayer
+    testImplementation 'org.robolectric:robolectric:4.8'
+
 }
