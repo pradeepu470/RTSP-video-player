@@ -44,11 +44,11 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         binding.bnStartStopSurface.setOnClickListener(View-> {
             if(binding.bnStartStopSurface.getText().toString().equalsIgnoreCase("Start")) {
                 if (binding.etRtspRequest.getText().toString().length() < 10) {
-                    Toast.makeText(mContext, "Please enter ip address of the RTSP camera", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Please enter correct ip address of the RTSP camera.", Toast.LENGTH_SHORT).show();
                 } else if (binding.etRtspUsername.getText().toString().length() < 2) {
-                    Toast.makeText(mContext, "Please enter username of the RTSP camera", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Please enter correct username of the RTSP camera.", Toast.LENGTH_SHORT).show();
                 } else if (binding.etRtspPassword.getText().toString().length() < 2) {
-                    Toast.makeText(mContext, "Please enter password of the RTSP camera", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Please enter correct password of the RTSP camera.", Toast.LENGTH_SHORT).show();
                 } else {
                     mStopPlayer = false;
                     startStreaming();
